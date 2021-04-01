@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.*?>
+
+<VBox prefHeight="752.0" prefWidth="1053.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+  <children>
+    <MenuBar VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="Управление">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Запуск" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Выход" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Настройки">
+          <items>
+            <MenuItem fx:id="settings_main" mnemonicParsing="false" text="Основные" />
+            <MenuItem mnemonicParsing="false" text="Станции" />
+                  <MenuItem fx:id="MenuServer" mnemonicParsing="false" text="Сервер" />
+                  <MenuItem fx:id="MiCurrentClient" mnemonicParsing="false" text="Текущий пользователь" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Помощь">
+          <items>
+            <MenuItem mnemonicParsing="false" text="О программе" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+         <children>
+            <GridPane prefHeight="600.0" prefWidth="1053.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <columnConstraints>
+                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="568.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="375.0" prefWidth="640.0" GridPane.rowIndex="1">
+                     <children>
+                        <TabPane fx:id="left_menu" onMouseEntered="#leftMenuMauseEnter" onMouseExited="#leftMenuMauseLeave" prefHeight="694.0" prefWidth="30.0" side="RIGHT" tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                            <Tab text="Станции">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <ListView fx:id="ServerList" onMouseClicked="#ServerListMouseClick" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </Tab>
+                            <Tab text="Инструменты">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                              </content>
+                            </Tab>
+                          </tabs>
+                        </TabPane>
+                        <TabPane fx:id="main_tab_pane" prefHeight="375.0" prefWidth="640.0" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="ALWAYS">
+                          <tabs>
+                            <Tab text="Сетевой анализ">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <SplitPane fx:id="tableSplitPane" dividerPositions="0.6953966699314398" prefHeight="346.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                            <items>
+                                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                                                   <children>
+                                                      <TableView fx:id="dataTable" onMouseClicked="#dataTableClick" prefHeight="474.0" prefWidth="300.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                        <columns>
+                                                          <TableColumn fx:id="date"  prefWidth="75.0" text="Дата" />
+                                                          <TableColumn fx:id="Station" prefWidth="75.0" text="Станция" />
+                                                            <TableColumn fx:id="S_RCHANNEL" prefWidth="75.0" text="Канал" />
+                                                            <TableColumn fx:id="LAC" prefWidth="75.0" text="LAC" />
+                                                            <TableColumn fx:id="CID" prefWidth="75.0" text="CID" />
+                                                            <TableColumn fx:id="Operator" prefWidth="75.0" text="Оператор" />
+                                                            <TableColumn fx:id="IMEI" prefWidth="75.0" text="IMEI" />
+                                                            <TableColumn fx:id="IMSI" prefWidth="75.0" text="IMSI" />
+                                                        </columns>
+                                                         <columnResizePolicy>
+                                                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                                         </columnResizePolicy>
+                                                      </TableView>
+                                                      <Label fx:id="textError" alignment="CENTER" contentDisplay="RIGHT" prefHeight="490.0" prefWidth="707.0" text="Label" textAlignment="CENTER" visible="false" AnchorPane.bottomAnchor="173.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                   </children>
+                                                </AnchorPane>
+                                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="344.0" prefWidth="338.0">
+                                                   <children>
+                                                      <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="345.0" prefWidth="386.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                        <items>
+                                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                                               <children>
+                                                                  <BarChart fx:id="chartOperators" layoutX="-2.0" prefHeight="282.0" prefWidth="296.0" title="Сотовые абоненты по операторам" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                    <xAxis>
+                                                                      <CategoryAxis label="Операторы" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="15.0" side="BOTTOM" />
+                                                                    </xAxis>
+                                                                    <yAxis>
+                                                                      <NumberAxis side="LEFT" />
+                                                                    </yAxis>
+                                                                  </BarChart>
+                                                               </children>
+                                                            </AnchorPane>
+                                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                                               <children>
+                                                                  <BarChart fx:id="chartCountry" prefHeight="282.0" prefWidth="296.0" title="Страны сотовых абонентов" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="0.0">
+                                                                     <xAxis>
+                                                                        <CategoryAxis side="BOTTOM" />
+                                                                     </xAxis>
+                                                                     <yAxis>
+                                                                        <NumberAxis side="LEFT" />
+                                                                     </yAxis>
+                                                                  </BarChart>
+                                                               </children>
+                                                            </AnchorPane>
+                                                        </items>
+                                                      </SplitPane>
+                                                   </children>
+                                                </AnchorPane>
+                                            </items>
+                                          </SplitPane>
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </Tab>
+                            <Tab text="Карта">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <WebView fx:id="webMap" maxHeight="-1.0" maxWidth="-1.0" minHeight="-1.0" minWidth="-1.0" prefHeight="346.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </Tab>
+                              <Tab text="Мониторинг">
+                                <content>
+                                    <AnchorPane>
+                                       <children>
+                                          <FlowPane fx:id="MonitoringPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="667.0" prefWidth="1023.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                </content>
+                              </Tab>
+                          </tabs>
+                        </TabPane>
+                     </children>
+                  </HBox>
+                  <ToolBar minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="33.0" prefWidth="1053.0" GridPane.valignment="TOP">
+                    <items>
+                        <HBox alignment="CENTER_LEFT" prefHeight="25.0" prefWidth="1041.0" spacing="50.0">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" prefHeight="25.0" prefWidth="288.0" spacing="3.0">
+                                 <children>
+                                    <ToggleButton fx:id="startStopButton" mnemonicParsing="false" onAction="#startStopButtonClick" text="Запуск" />
+                                    <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="52.0" text="Фильтр" />
+                                    <ComboBox fx:id="sortSelect" prefHeight="25.0" prefWidth="128.0" promptText="Все" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" prefHeight="25.0" prefWidth="667.0" spacing="5.0">
+                                 <children>
+                                    <Button fx:id="btServerStart" mnemonicParsing="false" prefHeight="25.0" prefWidth="158.0" text="Подключиться к серверу" />
+                                    <HBox fx:id="hboxServerStatusText" alignment="CENTER_LEFT" prefHeight="25.0" prefWidth="501.0" spacing="5.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                    </items>
+                  </ToolBar>
+               </children>
+            </GridPane>
+         </children>
+    </AnchorPane>
+  </children>
+</VBox>

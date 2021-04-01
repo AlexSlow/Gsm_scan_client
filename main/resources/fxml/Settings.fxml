@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <ListView fx:id="ListMenu" onMouseClicked="#listMenuClick" prefHeight="400.0" prefWidth="110.0" />
+            <TabPane fx:id="TabMenu" prefHeight="400.0" prefWidth="490.0" stylesheets="@../css/hideTabs.css" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab text="Основные">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <GridPane layoutX="-1.0" prefHeight="372.0" prefWidth="490.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <columnConstraints>
+                                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="100.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label text="Задержка (мс)" />
+                                    <TextField GridPane.columnIndex="1" />
+                                 </children>
+                                 <padding>
+                                    <Insets right="5.0" />
+                                 </padding>
+                              </GridPane>
+                           </children></AnchorPane>
+                  </content>
+                </Tab>
+                <Tab text="Сервера">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <HBox prefHeight="371.0" prefWidth="490.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <VBox alignment="TOP_CENTER">
+                                       <children>
+                                          <Button fx:id="bt_add" mnemonicParsing="false" prefHeight="25.0" prefWidth="118.0" text="Добавить " />
+                                          <ListView fx:id="ServerList" onMouseClicked="#listServerClick" prefHeight="338.0" prefWidth="120.0" />
+                                       </children>
+                                    </VBox>
+                                    <VBox prefHeight="371.0" prefWidth="322.0">
+                                       <children>
+                                          <GridPane prefHeight="371.0" prefWidth="321.0">
+                                            <columnConstraints>
+                                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
+                                              <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                             <children>
+                                                <Label text="Имя сервера" />
+                                                <Label text="Пользователь" GridPane.rowIndex="1" />
+                                                <Label text="Пароль" GridPane.rowIndex="2" />
+                                                <Label text="Хост" GridPane.rowIndex="3" />
+                                                <Label text="Путь к БД" GridPane.rowIndex="4" />
+                                                <TextField fx:id="ServerName" GridPane.columnIndex="1" />
+                                                <TextField fx:id="ServerLogin" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <TextField fx:id="ServerPassword" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                <TextField fx:id="ServerHost" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                <TextField fx:id="ServerPath" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                <Label text="Геопозиция" GridPane.rowIndex="5" />
+                                                <GridPane alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                                  <columnConstraints>
+                                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                  </columnConstraints>
+                                                  <rowConstraints>
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                  </rowConstraints>
+                                                   <children>
+                                                      <Label text="Долгота (LON)">
+                                                         <GridPane.margin>
+                                                            <Insets bottom="3.0" />
+                                                         </GridPane.margin></Label>
+                                                      <Label text="Широта (LAT)" GridPane.rowIndex="1">
+                                                         <GridPane.margin>
+                                                            <Insets top="3.0" />
+                                                         </GridPane.margin></Label>
+                                                      <TextField fx:id="ServerLon" GridPane.columnIndex="1">
+                                                         <GridPane.margin>
+                                                            <Insets bottom="3.0" />
+                                                         </GridPane.margin></TextField>
+                                                      <TextField fx:id="ServerLat" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                         <GridPane.margin>
+                                                            <Insets top="3.0" />
+                                                         </GridPane.margin></TextField>
+                                                   </children>
+                                                </GridPane>
+                                                <Label text="Состояние" GridPane.rowIndex="7" />
+                                                <CheckBox fx:id="CheckBoxActive" mnemonicParsing="false" text="Используется" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                                <Label text="Тип соединения" GridPane.rowIndex="6" />
+                                                <ComboBox fx:id="ComboBoxType" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets bottom="5.0" right="5.0" />
+                                             </VBox.margin>
+                                          </GridPane>
+                                          <ButtonBar nodeOrientation="LEFT_TO_RIGHT" prefHeight="30.0" prefWidth="372.0">
+                                            <buttons>
+                                              <Button fx:id="ServerAddBtn" mnemonicParsing="false" onAction="#serverCreate" text="Добавить" />
+                                                <Button fx:id="ServerDeleteBtn" mnemonicParsing="false" onAction="#serverDelete" text="Удалить" />
+                                                <Button fx:id="ServerUpdateBtn" mnemonicParsing="false" onAction="#serverUpdate" text="Обновить" />
+                                                <Button fx:id="ServerPingBtn" minWidth="50.0" mnemonicParsing="false" onAction="#serverPing" prefHeight="25.0" text="Пинг" />
+                                            </buttons>
+                                             <padding>
+                                                <Insets bottom="5.0" />
+                                             </padding>
+                                          </ButtonBar>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                  </content>
+                </Tab>
+              </tabs>
+            </TabPane>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>

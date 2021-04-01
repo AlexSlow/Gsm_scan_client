@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<Pane fx:id="Frame" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="228.0" prefWidth="234.0" style="-fx-border-color: black; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <Rectangle fx:id="Header" fill="#c2c3c4" height="25.0" layoutX="1.0" layoutY="1.0" stroke="TRANSPARENT" strokeType="INSIDE" width="232.0" />
+   <ListView layoutX="1.0" layoutY="25.0" prefHeight="173.0" prefWidth="157.0" />
+   <Label fx:id="ServerNameLabel" layoutX="7.0" layoutY="6.0" text="Server" />
+   <Button layoutX="9.0" layoutY="200.0" mnemonicParsing="false" text="Перейти к БД" />
+   <Button layoutX="109.0" layoutY="200.0" mnemonicParsing="false" text="Показать на карте" />
+</Pane>
