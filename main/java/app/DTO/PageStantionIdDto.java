@@ -6,6 +6,10 @@ import lombok.Data;
 public class PageStantionIdDto {
     Page page;
     Integer StantionId;
+    /**
+     * Используется только в повторном обращении
+     */
+    Long SpeachId=0l;
     public PageStantionIdDto(){
 
     }

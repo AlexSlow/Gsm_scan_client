@@ -11,10 +11,19 @@ import app.ServerConnection.SessionHandler.Transfer.SpeachTransfer;
 import app.ServerConnection.WebSocketConnecterImpl;
 import app.ServerConnection.WebsocketConnection;
 import app.client.*;
+import app.client.GUI.ChartController;
+import app.client.GUI.CountryChartController;
 import app.client.GUI.ListCellFactory;
+import app.client.GUI.OperatorChartController;
 import app.client.modal.AlertWindows;
 import app.client.modal.ChooseCurrentClient;
 import app.client.modal.InputHostModalWindow;
+import app.client.modal.ShowSpeachModalWindow;
+
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -29,13 +38,14 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCombination;
+import javafx.scene.input.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j;
@@ -124,6 +134,7 @@ public class MainController {
         serverConnectionManager.setWebsocketConnection(getWebSocketConnection());
         try {
             tryConnected();
+
         }catch (Exception e)
         {
            // e.printStackTrace();
@@ -200,17 +211,13 @@ public class MainController {
             public void handle(ActionEvent event) {
                 //Старт сервера
               CompletableFuture.runAsync(()->{
-
                 try {
-
                     serverConnectionManager.getWebsocketConnection().changeState();
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
                 Platform.runLater(()->{
-
                     if (serverConnectionManager.getWebsocketConnection().
                             getConnectionStatuse())
                         btServerStart.setText("Отключиться от сервера");
@@ -218,9 +225,16 @@ public class MainController {
                         btServerStart.setText("Подключиться к серверу");
                        stantionDtoObservableList.clear();
                     }
-
                     try {
+
                       tryConnected();
+
+                        if (serverConnectionManager.getRestConnection().getMonitoringStatus()){
+                            Platform.runLater(()->startStopButton.setText("Стоп"));
+                        }else{
+                            Platform.runLater(()->startStopButton.setText("Старт"));
+                        }
+
                       stantionListObserver.transfer(serverConnectionManager.
                               getRestConnection().getAllStantions());
                     } catch (ServerNotResponseException e) {
@@ -231,19 +245,64 @@ public class MainController {
                     }
 
                 });
-            });
-
-
-            }
+            }); }
         });
-    }
 
+    dataTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event) {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                if(event.getClickCount() == 2){
+                    dataTableClick();
+                }
+            }
+        }
+    });
+    ServerList.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event) {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                if(event.getClickCount() == 2){
+                  ServerListMouseClick();
+                }
+            }
+        }
+    });
+
+    setChartControllers();
+    }
+    void setChartControllers(){
+        CountryChartController countryChartController=new CountryChartController();
+        countryChartController.setBarChart(chartCountry);
+
+        OperatorChartController operatorChartController=new OperatorChartController();
+        operatorChartController.setBarChart(chartOperators);
+        speachTransfer.getChartControllers().add(countryChartController);
+        speachTransfer.getChartControllers().add(operatorChartController);
+
+        countryChartController.startAnimation();
+        operatorChartController.startAnimation();
+
+    }
     public void leftMenuMauseEnter() {
-        left_menu.setPrefWidth(200);
+        KeyValue widthValue = new KeyValue
+                (left_menu.prefWidthProperty(),200, Interpolator.EASE_BOTH );
+        KeyFrame frame = new KeyFrame(Duration.millis(150), widthValue);
+        Timeline timeline = new Timeline(frame);
+        timeline.play();
+
+       // left_menu.setPrefWidth(200);
     }
 
     public void leftMenuMauseLeave() {
-        left_menu.setPrefWidth(30);
+
+       // left_menu.setPrefWidth(30);
+        KeyValue widthValue = new KeyValue
+                (left_menu.prefWidthProperty(),30, Interpolator.EASE_BOTH );
+
+        KeyFrame frame = new KeyFrame(Duration.millis(150), widthValue);
+        Timeline timeline = new Timeline(frame);
+        timeline.play();
     }
 
     /**
@@ -262,9 +321,10 @@ public class MainController {
            PageStantionIdDto pageStantionIdDto=new PageStantionIdDto(pageController.getPage(),
                    curentStantion.getId());
 
-
            speachTransfer.transfer(serverConnectionManager.getRestConnection().getPage
                    (pageStantionIdDto));
+
+           setScrollHandler();
 
 
          //  speachTransfer.setEqualsFilter(false);
@@ -302,7 +362,11 @@ public class MainController {
 
 
     public void dataTableClick(){
+
         selectRow = dataTable.getSelectionModel().getSelectedIndex();
+        ShowSpeachModalWindow showSpeachModalWindow=new ShowSpeachModalWindow();
+        showSpeachModalWindow.open(dataTable.getItems().get(selectRow));
+        //Открыть модальное окно
     }
 
     public void reload(){
@@ -343,9 +407,6 @@ public class MainController {
                   throw new ServerNotConnected();
               }
             } catch (ServerNotResponseException e) {
-              //  e.printStackTrace();
-              //  log.warn(e.getMessage());
-                //Оповестить пользователя
                 image= imageManager.getImage(ImageManager.TypeImage.error);
                 text="Сервер недоступен "+serverConnectionManager.getServer().getHost();
                 throw new ServerNotResponseException();
@@ -356,11 +417,20 @@ public class MainController {
 
     }
 
+    /**
+     * Управление label состояния сервера
+     * @param img
+     * @param msg
+     */
     public void   showServerStatus(Image img,String msg){
     hboxServerStatusText.getChildren().clear();
     hboxServerStatusText.getChildren().add(new ImageView(img));
     hboxServerStatusText.getChildren().add(new Label(msg));
     }
+
+    /**
+     * CD интерфейс по созданию собственного клиента
+     */
     void saveClient(){
         ClientLoader clientLoader=new ClientLoader(curentClient);
         clientLoader.saveClient();
@@ -452,6 +522,32 @@ public class MainController {
 
     });
     }
+    /**
+     Достижение конца прокрутки
+     */
+    public void setScrollHandler(){
+
+        ScrollBar tvScrollBar = (ScrollBar) dataTable.lookup(".scroll-bar:vertical");
+        tvScrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if ((Double) newValue == 1.0) {
+                Speach last=dataTable.getItems().get(dataTable.getItems().size()-1);
+                PageStantionIdDto pageStantionIdDto=new PageStantionIdDto();
+                pageStantionIdDto.setPage(pageController.getPage());
+                pageStantionIdDto.setStantionId(curentStantion.getId());
+                pageStantionIdDto.setSpeachId(last.getId());
+                try {
+                    speachTransfer.transfer(serverConnectionManager.
+                            getRestConnection().getPageLessId(pageStantionIdDto));
+
+                    tvScrollBar.setValue(0.99);
+
+                } catch (ServerNotResponseException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
 }
 
 

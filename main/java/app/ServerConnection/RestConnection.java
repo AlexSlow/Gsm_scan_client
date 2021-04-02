@@ -18,8 +18,10 @@ public interface RestConnection {
     public static final  String SERVICE_CONTROLLER_URL="Service";
     public static final String START="start";
     public static final String STOP="stop";
+    public static final String STATUS="status";
 
     public static final  String GET_PAGE_SPEACH="Speach/page";
+    public static final  String GET_PAGE_SPEACH_WITH_ID_LESS="Speach/pageWithIdLess";
 
     void test() throws ServerNotResponseException;
     void subscribe(Integer stantionDtoId,String userUUID) throws ServerNotResponseException;
@@ -30,5 +32,7 @@ public interface RestConnection {
     Stantion getStantionById(Integer id) throws ServerNotResponseException;
     void startMonitoring() throws ServerNotResponseException;
     void stopMonitoring() throws ServerNotResponseException;
-    StantionSpeachDTO getPage(PageStantionIdDto pageStantionIdDto) throws ServerNotResponseException; ;
+    StantionSpeachDTO getPage(PageStantionIdDto pageStantionIdDto) throws ServerNotResponseException;
+    StantionSpeachDTO getPageLessId(PageStantionIdDto pageStantionIdDto) throws ServerNotResponseException;
+    Boolean getMonitoringStatus() throws ServerNotResponseException;
 }

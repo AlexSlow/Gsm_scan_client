@@ -239,6 +239,28 @@ public class RestConnecterImpl implements RestConnection {
         }
 
     }
+
+    @Override
+    public Boolean getMonitoringStatus() throws ServerNotResponseException {
+        try {
+            HttpHeaders jsonHeader=new HttpHeaders();
+            jsonHeader.setContentType(MediaType.APPLICATION_JSON);
+
+            UriComponents uriComponents =
+                    UriComponentsBuilder.fromHttpUrl(server.getHost()).
+                            path(SERVICE_CONTROLLER_URL+"/"+STATUS).
+                            encode().build();
+           return restTemplate.exchange(uriComponents.toUri(),
+                    HttpMethod.GET,new HttpEntity<>(null,jsonHeader), Boolean.class).getBody();
+        }catch (Exception e){
+            ServerNotResponseException serverNotResponseException=new ServerNotResponseException("Исключение теста соединения");
+            serverNotResponseException.initCause(e);
+            // e.printStackTrace();
+            log.warn(e.getMessage());
+            throw serverNotResponseException;
+        }
+    }
+
     @Override
     public StantionSpeachDTO getPage(PageStantionIdDto pageStantionIdDto)  throws ServerNotResponseException {
         try {
@@ -266,5 +288,34 @@ public class RestConnecterImpl implements RestConnection {
             throw serverNotResponseException;
         }
 
+    }
+
+    @Override
+    public StantionSpeachDTO getPageLessId(PageStantionIdDto pageStantionIdDto)
+            throws ServerNotResponseException {
+        try {
+        UriComponentsBuilder builder =
+                UriComponentsBuilder.
+                        fromHttpUrl(server.getHost()+"/"+GET_PAGE_SPEACH_WITH_ID_LESS);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<PageStantionIdDto> httpEntity=new HttpEntity<>(pageStantionIdDto,headers);
+
+
+        ResponseEntity<StantionSpeachDTO> responseEntity = restTemplate.exchange(
+                builder.build().encode().toUri(),
+                HttpMethod.POST,
+                httpEntity,
+                StantionSpeachDTO.class);
+        return responseEntity.getBody();
+
+    }
+    catch (Exception e){
+        ServerNotResponseException serverNotResponseException=new ServerNotResponseException("Исключение при получении страницы");
+        serverNotResponseException.initCause(e);
+        log.warn(e.getMessage());
+        throw serverNotResponseException;
+    }
     }
 }

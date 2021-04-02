@@ -12,7 +12,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import lombok.Data;
+import lombok.SneakyThrows;
 
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
@@ -93,6 +96,18 @@ public class SettingsController {
                 CheckBoxActive.setSelected(false);
                 ComboBoxType.getSelectionModel().clearSelection();
 
+            }
+        });
+
+        ServerList.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @SneakyThrows
+            @Override
+            public void handle(MouseEvent event) {
+                if(event.getButton().equals(MouseButton.PRIMARY)){
+                    if(event.getClickCount() == 2){
+                        listServerClick();
+                    }
+                }
             }
         });
     }

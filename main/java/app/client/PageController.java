@@ -10,6 +10,7 @@ public class PageController {
     public void firstPage(){
         page.setStartRow(1);
     }
+
     public PageController(){
        init();
     }
@@ -19,7 +20,7 @@ public class PageController {
     }
     private void init(){
         page=new Page();
-        page.setLimit(100);
+        page.setLimit(50);
     }
 
 }

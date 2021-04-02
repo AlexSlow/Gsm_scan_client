@@ -51,7 +51,7 @@
                               <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <ListView fx:id="ServerList" onMouseClicked="#ServerListMouseClick" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <ListView fx:id="ServerList" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                               </content>
@@ -73,9 +73,9 @@
                                             <items>
                                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                                                    <children>
-                                                      <TableView fx:id="dataTable" onMouseClicked="#dataTableClick" prefHeight="474.0" prefWidth="300.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                      <TableView fx:id="dataTable" prefHeight="474.0" prefWidth="300.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                         <columns>
-                                                          <TableColumn fx:id="date"  prefWidth="75.0" text="Дата" />
+                                                          <TableColumn fx:id="date" prefWidth="75.0" text="Дата" />
                                                           <TableColumn fx:id="Station" prefWidth="75.0" text="Станция" />
                                                             <TableColumn fx:id="S_RCHANNEL" prefWidth="75.0" text="Канал" />
                                                             <TableColumn fx:id="LAC" prefWidth="75.0" text="LAC" />
