@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Data
 public class Stantion {
-    private Integer id;
+    private Long id;
   private String name;
   private String username;
   private String password;

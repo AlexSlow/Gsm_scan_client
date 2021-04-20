@@ -1,22 +1,22 @@
-package app.client.GUI;
+package app.client.GUI.Charts.SingleSeriasFrontCharts;
 
 import app.DTO.Speach;
-import javafx.scene.chart.Chart;
+import javafx.scene.chart.BarChart;
 
-import java.util.List;
+public class CountryXYChartController extends XYChartController {
+    public CountryXYChartController(BarChart<String, Integer> barChart) {
+        super(barChart);
+    }
 
-public class CountryChartController extends ChartController {
     @Override
     String getSerias(Speach data) {
         return data.getStation();
     }
 
     @Override
-    void test(List<Speach> speaches) {
-        for(Speach speach:speaches){
+    void test(Speach speach) {
             int rand=randomWithRange(1,5);
             speach.setStation(speach.getStation()+rand);
-        }
     }
 
     int randomWithRange(int min, int max){

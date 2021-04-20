@@ -1,20 +1,19 @@
 package app.ServerConnection.SessionHandler.Transfer;
 import app.DTO.Speach;
 import app.DTO.StantionSpeachDTO;
-import app.client.GUI.ChartController;
+import app.client.GUI.Charts.SingleSeriasFrontCharts.ChartControllerInterface;
 import app.client.PageController;
 import javafx.application.Platform;
 import javafx.scene.control.TableView;
 import lombok.Data;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Data
 public class SpeachTransfer implements StompSingleTransfer<StantionSpeachDTO> {
-    private List<ChartController> chartControllers=new ArrayList<>();
+    private List<ChartControllerInterface> chartControllers=new ArrayList<>();
     private PageController pageController;
     private TableView<Speach> tableView;
     private boolean equalsFilter=false;
@@ -29,6 +28,7 @@ public class SpeachTransfer implements StompSingleTransfer<StantionSpeachDTO> {
            for(Speach speach:data.getSpeachList()){
                if (tableSpeach.contains(speach)) deleteSpeach.add(speach);
            }
+           // Удалить все повторяющиеся записи
            data.getSpeachList().removeAll(deleteSpeach);
 
           // System.out.println("Удалено !"+ new Date());
@@ -40,11 +40,11 @@ public class SpeachTransfer implements StompSingleTransfer<StantionSpeachDTO> {
             tableView.getItems().addAll(data.getSpeachList());
         });
         CompletableFuture.runAsync(()->{
-            for (ChartController c:chartControllers) c.setSpeach(data.getSpeachList());
+            for (ChartControllerInterface c:chartControllers) c.setSpeachList(data.getSpeachList());
         });
     }
     public void clear(){
         tableView.getItems().clear();
-        for (ChartController c:chartControllers) c.clear();
+        for (ChartControllerInterface c:chartControllers) c.clear();
     }
 }

@@ -7,9 +7,9 @@ import java.util.Objects;
 
 @Data
 public class StantionDto implements Serializable {
-    private Integer id;
+    private Long id;
     private String name;
-    private boolean isActive;
+    private StantionStatus status;
     public StantionDto(){}
 
     @Override

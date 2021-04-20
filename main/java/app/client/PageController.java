@@ -3,10 +3,13 @@ package app.client;
 import app.DTO.Page;
 import lombok.Data;
 
+/**
+ * Хранит информацию о текущей станции и странице
+ */
 @Data
 public class PageController {
     private Page page;
-    private Integer stnationDtoId=-1;
+    private Long stnationDtoId=-1l;
     public void firstPage(){
         page.setStartRow(1);
     }
@@ -14,7 +17,7 @@ public class PageController {
     public PageController(){
        init();
     }
-    public PageController(Integer id){
+    public PageController(Long id){
         stnationDtoId=id;
         init();
     }

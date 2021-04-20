@@ -12,7 +12,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -51,7 +51,7 @@ public class RestConnecterImpl implements RestConnection {
     }
 
     @Override
-    public void subscribe(Integer stantionDtoId, String userUUID) throws ServerNotResponseException {
+    public void subscribe(Long stantionDtoId, String userUUID) throws ServerNotResponseException {
         try {
             LinkedMultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
             params.add("stantionId", stantionDtoId);
@@ -80,7 +80,6 @@ public class RestConnecterImpl implements RestConnection {
             log.warn(e.getMessage());
             throw serverNotResponseException;
         }
-
     }
     @Override
     public void unsubscribe(String userUUID) throws ServerNotResponseException {
@@ -133,6 +132,25 @@ public class RestConnecterImpl implements RestConnection {
     }
 
     @Override
+    public List<Client> getClients() throws ServerNotResponseException {
+        try {
+            UriComponentsBuilder builder =
+                    UriComponentsBuilder.
+                            fromHttpUrl(server.getHost()+"/"+STANTIONS_CONTROLLER_URL+"/"+GET_CLIENTS);
+            ResponseEntity<Client[]> response
+                    = restTemplate.getForEntity(builder.build().encode().toUri(), Client[].class);
+            return Arrays.asList(response.getBody());
+        }catch (Exception e){
+            ServerNotResponseException serverNotResponseException=
+                    new ServerNotResponseException("Исключение при получении клиентов");
+            serverNotResponseException.initCause(e);
+            e.printStackTrace();
+            log.warn(e.getMessage());
+            throw serverNotResponseException;
+        }
+    }
+
+    @Override
     public void addStantion(Stantion stantion) throws ServerNotResponseException {
         try {
             log.debug("Создание станции");
@@ -154,7 +172,7 @@ public class RestConnecterImpl implements RestConnection {
     }
 
     @Override
-    public void removeStantion(Integer stantionDtoId) throws ServerNotResponseException {
+    public void removeStantion(Long stantionDtoId) throws ServerNotResponseException {
         try {
             log.debug("Удаление станции с id= "+stantionDtoId);
             HttpHeaders headers = new HttpHeaders();
@@ -176,7 +194,7 @@ public class RestConnecterImpl implements RestConnection {
     }
 
     @Override
-    public Stantion getStantionById(Integer id) throws ServerNotResponseException {
+    public Stantion getStantionById(Long id) throws ServerNotResponseException {
         try {
             log.debug("Получение станции с id= "+id);
             HttpHeaders headers = new HttpHeaders();
@@ -317,5 +335,36 @@ public class RestConnecterImpl implements RestConnection {
         log.warn(e.getMessage());
         throw serverNotResponseException;
     }
+    }
+
+    @Override
+    public StantionSpeachDTO getAllByPeriod(Date start, Date end, Long stantionId) throws ServerNotResponseException {
+        try {
+            LinkedMultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+            params.add("start", start.getTime());
+            params.add("end", end.getTime());
+            params.add("stantionId", stantionId);
+            UriComponentsBuilder builder =
+                    UriComponentsBuilder.
+                            fromHttpUrl(server.getHost()+"/"+GET_ALL_BY_PERIOD);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+            HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity =
+                    new HttpEntity<>(params, headers);
+            ResponseEntity<StantionSpeachDTO> responseEntity = restTemplate.exchange(
+                    builder.build().encode().toUri(),
+                    HttpMethod.POST,
+                    requestEntity,
+                    StantionSpeachDTO.class);
+            return responseEntity.getBody();
+
+        } catch (Exception e){
+            ServerNotResponseException serverNotResponseException=
+                    new ServerNotResponseException("Исключение при поптыке получить пакет");
+            serverNotResponseException.initCause(e);
+            e.printStackTrace();
+            log.warn(e.getMessage());
+            throw serverNotResponseException;
+        }
     }
 }

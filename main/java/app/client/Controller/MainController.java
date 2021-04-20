@@ -6,15 +6,13 @@ import app.ServerConnection.Exception.ServerNotResponseException;
 import app.ServerConnection.ServerConnectionManager;
 import app.ServerConnection.SessionHandler.IndificateStompSessionHandler;
 import app.ServerConnection.SessionHandler.MonitoringStatusHandler;
-import app.ServerConnection.SessionHandler.Transfer.ListObserver;
 import app.ServerConnection.SessionHandler.Transfer.SpeachTransfer;
 import app.ServerConnection.WebSocketConnecterImpl;
 import app.ServerConnection.WebsocketConnection;
 import app.client.*;
-import app.client.GUI.ChartController;
-import app.client.GUI.CountryChartController;
-import app.client.GUI.ListCellFactory;
-import app.client.GUI.OperatorChartController;
+import app.client.GUI.*;
+import app.client.GUI.Charts.MultipleSeriasCharts.*;
+import app.client.GUI.Charts.SingleSeriasFrontCharts.*;
 import app.client.modal.AlertWindows;
 import app.client.modal.ChooseCurrentClient;
 import app.client.modal.InputHostModalWindow;
@@ -25,8 +23,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -34,6 +30,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.LineChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -86,8 +83,22 @@ public class MainController {
     @FXML
     private BarChart<String, Integer> chartOperators;
     @FXML
+    private ListView<Client>  ClientListView;
+    @FXML
     private FlowPane MonitoringPane;
     private WebEngine webEngine;
+    /**
+     * Окно статистики
+     */
+
+
+    @FXML private BarChart<String,Integer> statisticBarChartOperator;
+    @FXML private BarChart<String,Integer> statisticBarChartCounty;
+    @FXML private BarChart<String,Integer> EventChart;
+    private MultipleSeriasChartDecorator multipleSeriasChartDecorator=new
+            MultipleSeriasChartDecorator();
+    @FXML private LineChart<String,Integer> AmountOfAbbonents;
+    @FXML private Button btStatisticSettings;
 
     /**
      * Terehov
@@ -100,12 +111,12 @@ public class MainController {
     private MenuItem MenuServer;
     @FXML private MenuItem MiCurrentClient;
 
-    ObservableList<StantionDto> stantionDtoObservableList;
+
+
 
     // -- ------------------Модель----------------------------------------------------------------------------------------
     //@Autowired
     private ServerConnectionManager serverConnectionManager;
-    private ListObserver<StantionDto> stantionListObserver=new ListObserver<>();
     //------------------- Переменные состояния
 
     private StantionDto curentStantion;
@@ -117,32 +128,36 @@ public class MainController {
 
 
     void getObserverList(){
-      stantionDtoObservableList =FXCollections.observableArrayList();
-      ServerList.setItems(stantionDtoObservableList);
+
       ServerList.setCellFactory(l-> ListCellFactory.getCell());
     }
 
 
     @FXML
     protected void initialize() {
-       getObserverList();
-       loadClient();
-       stantionListObserver.subscribe(ServerList.getItems());
+
+        getObserverList();
+        loadClient();
+     //   stantionListObserver.subscribe(ServerList.getItems());
+      //  clientListObserver.subscribe(ClientListView.getItems());
 
 
-        serverConnectionManager=new ServerConnectionManager();
+        serverConnectionManager = new ServerConnectionManager();
         serverConnectionManager.setWebsocketConnection(getWebSocketConnection());
         try {
             tryConnected();
 
-        }catch (Exception e)
-        {
-           // e.printStackTrace();
+        } catch (Exception e) {
+            // e.printStackTrace();
         }
 
-      // Map init
-      //  webEngine = webMap.getEngine();
-      //  webEngine.load(this.getClass().getResource("/Maps/Map.html").toExternalForm());
+        // Map init
+        webEngine = webMap.getEngine();
+          webEngine.
+                  load(this.getClass().getClassLoader().
+                          getResource("Maps/Map.html").toExternalForm());
+
+
         // Settings init
         settings_main.setAccelerator(KeyCombination.keyCombination("Ctrl+T"));
         settings_main.setOnAction(new EventHandler<ActionEvent>() {
@@ -152,11 +167,11 @@ public class MainController {
                 try {
                     Stage stage = new Stage();
                     FXMLLoader loader = new FXMLLoader();
-                    SettingsController settingsController=new SettingsController();
-                    settingsController.setStantionDtos(stantionDtoObservableList);
+                    SettingsController settingsController = new SettingsController();
+                    settingsController.setStantionDtos(ServerList.getItems());
                     settingsController.setServerConnectionManager(serverConnectionManager);
                     loader.setController(settingsController);
-                    URL location=getClass().getClassLoader().getResource("fxml/Settings.fxml");
+                    URL location = getClass().getClassLoader().getResource("fxml/Settings.fxml");
                     //System.out.println(location);
                     loader.setLocation(location);
                     Parent root = loader.load();
@@ -173,7 +188,7 @@ public class MainController {
         });
 
 
-       setTableView();
+        setTableView();
 
 
         //Задать значение полю выбора фильтра
@@ -188,7 +203,7 @@ public class MainController {
             @Override
             public void handle(ActionEvent event) {
 
-                InputHostModalWindow inputHostModalWindow=new InputHostModalWindow();
+                InputHostModalWindow inputHostModalWindow = new InputHostModalWindow();
                 inputHostModalWindow.setHost(Optional.of(serverConnectionManager.getServer().getHost()));
                 inputHostModalWindow.open(serverConnectionManager.getServer().getHost());
                 serverConnectionManager.setServer(inputHostModalWindow.getHost().get());
@@ -199,9 +214,9 @@ public class MainController {
         MiCurrentClient.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                ChooseCurrentClient chooseCurrentClient=new ChooseCurrentClient();
+                ChooseCurrentClient chooseCurrentClient = new ChooseCurrentClient();
                 chooseCurrentClient.open(curentClient);
-                curentClient=chooseCurrentClient.getClient().get();
+                curentClient = chooseCurrentClient.getClient().get();
                 saveClient();
 
             }
@@ -210,33 +225,52 @@ public class MainController {
             @Override
             public void handle(ActionEvent event) {
                 //Старт сервера
-              CompletableFuture.runAsync(()->{
-                try {
-                    serverConnectionManager.getWebsocketConnection().changeState();
+                CompletableFuture.runAsync(() -> {
+                    try {
+                        serverConnectionManager.getWebsocketConnection().changeState();
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Platform.runLater(()->{
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                     if (serverConnectionManager.getWebsocketConnection().
                             getConnectionStatuse())
-                        btServerStart.setText("Отключиться от сервера");
-                    else{
-                        btServerStart.setText("Подключиться к серверу");
-                       stantionDtoObservableList.clear();
+                        Platform.runLater(() -> {
+                            btServerStart.setText("Отключиться от сервера");
+                        });
+                    else {
+                        Platform.runLater(() -> {
+                            btServerStart.setText("Подключиться к серверу");
+                        });
+                        Platform.runLater(() -> {
+                            ServerList.getItems().clear();
+                            ClientListView.getItems().clear();
+                        });
+
                     }
                     try {
+                        tryConnected();
 
-                      tryConnected();
-
-                        if (serverConnectionManager.getRestConnection().getMonitoringStatus()){
-                            Platform.runLater(()->startStopButton.setText("Стоп"));
-                        }else{
-                            Platform.runLater(()->startStopButton.setText("Старт"));
+                        //Получить станции
+                        Platform.runLater(()->{
+                        ServerList.getItems().clear();
+                        ClientListView.getItems().clear();
+                        try {
+                            ServerList.getItems().addAll(serverConnectionManager.
+                                    getRestConnection().getAllStantions());
+                        } catch (ServerNotResponseException e) {
+                            e.printStackTrace();
                         }
+                        //Получить клиентов
 
-                      stantionListObserver.transfer(serverConnectionManager.
-                              getRestConnection().getAllStantions());
+                        try {
+                            ClientListView.getItems().addAll(serverConnectionManager
+                                    .getRestConnection().getClients());
+                        } catch (ServerNotResponseException e) {
+                            e.printStackTrace();
+                        }
+                    });
+
                     } catch (ServerNotResponseException e) {
                         e.printStackTrace();
                         //Сервер недоступен
@@ -245,8 +279,9 @@ public class MainController {
                     }
 
                 });
-            }); }
+            }
         });
+
 
     dataTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
         @Override
@@ -269,19 +304,33 @@ public class MainController {
         }
     });
 
+        /**
+         * Проставить контроллеры для передних графиков на первом окне
+         */
     setChartControllers();
+    registrSratisticBarCharts();
+    onStitisticSettingOpen();
+
+    //isDownloud=true;
     }
+
+    /**
+     *  INIT END
+     */
+
+
     void setChartControllers(){
-        CountryChartController countryChartController=new CountryChartController();
-        countryChartController.setBarChart(chartCountry);
+        CountryXYChartController countryChartController=new CountryXYChartController(chartCountry);
 
-        OperatorChartController operatorChartController=new OperatorChartController();
-        operatorChartController.setBarChart(chartOperators);
-        speachTransfer.getChartControllers().add(countryChartController);
-        speachTransfer.getChartControllers().add(operatorChartController);
+        OperatorXYChartController operatorChartController=new OperatorXYChartController(chartOperators);
 
-        countryChartController.startAnimation();
-        operatorChartController.startAnimation();
+
+
+        ChartControllerDecorator chartControllerDecorator=
+                new ChartControllerDecorator();
+        chartControllerDecorator.getChartControllerList().add(countryChartController);
+        chartControllerDecorator.getChartControllerList().add(operatorChartController);
+        speachTransfer.getChartControllers().add(chartControllerDecorator);
 
     }
     public void leftMenuMauseEnter() {
@@ -310,8 +359,9 @@ public class MainController {
      */
     public void ServerListMouseClick() {
 
-        curentStantion = stantionDtoObservableList.get(ServerList.getSelectionModel().getSelectedIndex());
+        curentStantion = ServerList.getItems().get(ServerList.getSelectionModel().getSelectedIndex());
         pageController.setStnationDtoId(curentStantion.getId());
+
 
         try {
            speachTransfer.setEqualsFilter(true);
@@ -321,10 +371,12 @@ public class MainController {
            PageStantionIdDto pageStantionIdDto=new PageStantionIdDto(pageController.getPage(),
                    curentStantion.getId());
 
+
            speachTransfer.transfer(serverConnectionManager.getRestConnection().getPage
                    (pageStantionIdDto));
 
-           setScrollHandler();
+           //Обработчик при прокрутке. Может инициироваться только после показа сцены
+          // setScrollHandler();
 
 
          //  speachTransfer.setEqualsFilter(false);
@@ -338,6 +390,7 @@ public class MainController {
     }
 
     public void startStopButtonClick() {
+        if (!serverConnectionManager.getWebsocketConnection().getConnectionStatuse()) return;
         CompletableFuture.runAsync(()->{
             if (startStopButton.isSelected()) {
                 //Запустить
@@ -369,12 +422,6 @@ public class MainController {
         //Открыть модальное окно
     }
 
-    public void reload(){
-        ServerList.getItems().clear();
-        sortSelect.getItems().clear();
-        MonitoringPane.getChildren().clear();
-        initialize();
-    }
 
 
     public void tryConnected() throws ServerNotResponseException, ServerNotConnected {
@@ -401,14 +448,17 @@ public class MainController {
               {
                   image= imageManager.getImage(ImageManager.TypeImage.online);
                   text="Подключено к серверу "+serverConnectionManager.getServer().getHost();
+                 Platform.runLater(()->btServerStart.setText("Отключиться от сервера"));
               }else {
                   image= imageManager.getImage(ImageManager.TypeImage.offlaine);
                   text="Доступен сервер "+serverConnectionManager.getServer().getHost();
+                 Platform.runLater(()->btServerStart.setText("Подключиться к серверу"));
                   throw new ServerNotConnected();
               }
             } catch (ServerNotResponseException e) {
                 image= imageManager.getImage(ImageManager.TypeImage.error);
                 text="Сервер недоступен "+serverConnectionManager.getServer().getHost();
+                Platform.runLater(()->btServerStart.setText("Подключиться к серверу"));
                 throw new ServerNotResponseException();
 
             } finally {
@@ -454,14 +504,14 @@ public class MainController {
     IndificateStompSessionHandler getIndificateStompHandler(){
         IndificateStompSessionHandler sessionHandler = new IndificateStompSessionHandler();
         sessionHandler.setCurrentClient(curentClient);
-        sessionHandler.setStantionsStompMultipleTransfer(stantionListObserver);
+        sessionHandler.setStantionsStompMultipleTransfer(ServerList.getItems());
+        sessionHandler.setClientStompMultipleTransfer(ClientListView.getItems());
 
         speachTransfer=new SpeachTransfer();
         speachTransfer.setTableView(dataTable);
         speachTransfer.setPageController(pageController);
         sessionHandler.setSpeachStompSingleTransfer(speachTransfer);
 
-        sessionHandler.setSpeachStompSingleTransfer(speachTransfer);
         sessionHandler.setOnClose(()-> {
             try {
                 tryConnected();
@@ -489,6 +539,8 @@ public class MainController {
         });
         return monitoringStatusHandler;
      }
+
+
 
 
     /**
@@ -522,6 +574,9 @@ public class MainController {
 
     });
     }
+
+
+
     /**
      Достижение конца прокрутки
      */
@@ -546,6 +601,64 @@ public class MainController {
                 }
             }
         });
+    }
+
+    /**
+     * Обработка данных при построении графиков статистики
+     */
+    void onStitisticSettingOpen(){
+
+        btStatisticSettings.setOnAction(event->{
+            // Открыть настройки
+            try {
+                Stage stage = new Stage();
+                FXMLLoader loader = new FXMLLoader();
+                StatisticModalController statisticModalController = new StatisticModalController();
+                statisticModalController.setStantionDtos(ServerList.getItems());
+                statisticModalController.setMultipleSeriasChartDecorator(multipleSeriasChartDecorator);
+                statisticModalController.setRestConnection(serverConnectionManager.getRestConnection());
+                loader.setController(statisticModalController);
+                URL location = getClass().getClassLoader().getResource("fxml/ChartSettingsModal.fxml");
+
+                loader.setLocation(location);
+                Parent root = loader.load();
+                Scene scene = new Scene(root);
+                stage.setTitle("Настройки");
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.setScene(scene);
+                stage.show();
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.warn(e.getMessage());
+            }
+        });
+
+    }
+    private void registrSratisticBarCharts()
+    {
+        multipleSeriasChartDecorator.clear();
+
+        AbonentChartController abonentChartController=new
+                AbonentChartController(AmountOfAbbonents);
+        multipleSeriasChartDecorator.getChartControllers().
+                add(abonentChartController);
+
+        CountryChartController countryChartController=
+                new CountryChartController(statisticBarChartCounty);
+
+        multipleSeriasChartDecorator.getChartControllers().
+                add(countryChartController);
+
+        OperatorChartController operatorChartController=
+                new OperatorChartController(statisticBarChartOperator);
+
+        multipleSeriasChartDecorator.getChartControllers().
+                add(operatorChartController);
+
+        EventChartController eventChartController=new
+                EventChartController(EventChart);
+        multipleSeriasChartDecorator.getChartControllers().
+                add(eventChartController);
     }
 
 }

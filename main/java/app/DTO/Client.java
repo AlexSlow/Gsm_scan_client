@@ -13,4 +13,9 @@ public class Client implements Serializable {
     private String name;
     private Integer lon;
     private Integer lat;
+
+    @Override
+    public String toString() {
+       return name;
+    }
 }

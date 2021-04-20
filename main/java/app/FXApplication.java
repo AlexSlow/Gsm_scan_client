@@ -41,7 +41,8 @@ private Stage mainStage;
         mainStage=primaryStage;
         log.info("Запуск FX клиента");
         FXMLLoader loader = new FXMLLoader();
-        loader.setController(getController());
+        MainController mainController=getController();
+        loader.setController(mainController);
 
 
 
@@ -50,7 +51,10 @@ private Stage mainStage;
         Parent root = loader.load();
         primaryStage.setTitle("СПО КБС");
         primaryStage.setScene(new Scene(root));
+
+
         primaryStage.show();
+        mainController.setScrollHandler();
     }
     MainController getController(){
         MainController mainController=new MainController();

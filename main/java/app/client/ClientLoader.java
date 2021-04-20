@@ -4,6 +4,9 @@ import app.DTO.Client;
 import app.ServerConnection.Serializators.JSONSerializator;
 import lombok.Data;
 
+/**
+ * Загрузка текущего клиента
+ */
 @Data
 public class ClientLoader {
 private static final String fileClient="curent client.json";

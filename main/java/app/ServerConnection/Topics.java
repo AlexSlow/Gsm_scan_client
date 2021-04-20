@@ -8,5 +8,7 @@ public abstract class Topics {
     public static final String TOPIC_STANTION_DTO="/topic/stantionsDto";
     public static final String TOPIC_MONITORING_STATUS="/topic/MonitoringStatus";
 
+    public  static  final  String TOPIC_CLIENTS="/topic/clients";
+
 
 }

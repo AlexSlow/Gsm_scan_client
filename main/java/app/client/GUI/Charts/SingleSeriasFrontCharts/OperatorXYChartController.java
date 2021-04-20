@@ -1,20 +1,21 @@
-package app.client.GUI;
+package app.client.GUI.Charts.SingleSeriasFrontCharts;
 
 import app.DTO.Speach;
+import javafx.scene.chart.XYChart;
+@Deprecated
+public class OperatorXYChartController extends XYChartController {
+    public OperatorXYChartController(XYChart<String, Integer> barChart) {
+        super(barChart);
+    }
 
-import java.util.List;
-
-public class OperatorChartController  extends  ChartController{
     @Override
     String getSerias(Speach data) {
         return data.getOperator();
     }
     @Override
-    void test(List<Speach> speaches) {
-        for(Speach speach:speaches){
+    void test(Speach speach) {
             int rand=randomWithRange(1,5);
             speach.setOperator(speach.getOperator()+rand);
-        }
     }
 
     int randomWithRange(int min, int max){

@@ -123,7 +123,10 @@ public class SettingsController {
     public void listServerClick() throws ServerNotResponseException {
 
             Stantion server = serverConnectionManager.getRestConnection().getStantionById(
-           (ServerList.getSelectionModel().getSelectedIndex()));
+                    (long) ServerList.getSelectionModel().getSelectedIndex());
+
+            System.out.println(server);
+
             ServerName.setText(server.getName());
             ServerLogin.setText(server.getUsername());
             ServerPassword.setText(server.getPassword());

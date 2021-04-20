@@ -8,6 +8,7 @@ import app.ServerConnection.SessionHandler.Transfer.StompMultipleTransfer;
 
 import app.ServerConnection.SessionHandler.Transfer.StompSingleTransfer;
 import app.ServerConnection.Topics;
+import javafx.collections.ObservableList;
 import lombok.Data;
 import lombok.extern.log4j.Log4j;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -24,8 +25,9 @@ public class IndificateStompSessionHandler extends StompSessionHandlerAdapter {
     private Client currentClient;
     private CallBack onClose;
 
-    private StompMultipleTransfer<StantionDto> stantionsStompMultipleTransfer;
+    private ObservableList<StantionDto> stantionsStompMultipleTransfer;
     private StompSingleTransfer<StantionSpeachDTO> speachStompSingleTransfer;
+    private ObservableList<Client> clientStompMultipleTransfer;
     private MonitoringStatusHandler monitoringStatusHandler;
 
    // private StompSingleTransfer<Client> clientStompSingleTransfer;
@@ -48,6 +50,10 @@ public class IndificateStompSessionHandler extends StompSessionHandlerAdapter {
             session.subscribe(Topics.SELF_SPEACH,speachStompSessionHandler);
 
             session.subscribe(Topics.TOPIC_MONITORING_STATUS,monitoringStatusHandler);
+
+            ClientStompSessionHandler clientStompSessionHandler=new ClientStompSessionHandler();
+            clientStompSessionHandler.setStompMultipleTransfer(clientStompMultipleTransfer);
+            session.subscribe(Topics.TOPIC_CLIENTS,clientStompSessionHandler);
         }
     }
 

@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class PageStantionIdDto {
     Page page;
-    Integer StantionId;
+    Long StantionId;
     /**
      * Используется только в повторном обращении
      */
@@ -14,7 +14,7 @@ public class PageStantionIdDto {
 
     }
 
-    public PageStantionIdDto(Page page, Integer stantionId) {
+    public PageStantionIdDto(Page page, Long stantionId) {
         this.page = page;
         StantionId = stantionId;
     }

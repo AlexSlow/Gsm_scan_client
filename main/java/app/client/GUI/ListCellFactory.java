@@ -17,9 +17,19 @@ public class ListCellFactory {
                 } else {
                     ImageView imageView;
                     ImageManager imageManager=new ImageManager();
-                    if (item.isActive())
-                        imageView=new ImageView(imageManager.getImage(ImageManager.TypeImage.online));
-                    else imageView=new ImageView(imageManager.getImage(ImageManager.TypeImage.error));
+                    switch (item.getStatus())
+                    {
+                        case Online:
+                            imageView=new ImageView(imageManager.getImage(ImageManager.TypeImage.online));
+                            break;
+                        case Offline:
+                            imageView=new ImageView(imageManager.getImage(ImageManager.TypeImage.offlaine));
+                            break;
+                        case notAvailable:
+                            default:
+                            imageView=new ImageView(imageManager.getImage(ImageManager.TypeImage.error));
+                            break;
+                    }
                     setText(item.getName());
                     setGraphic(imageView);
                 }
